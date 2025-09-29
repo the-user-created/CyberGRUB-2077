@@ -1,0 +1,15 @@
+!CyberGRUB-2077/
+!img/
+!lang/
+!scripts/
+!icons.png
+!README.md
+!LICENSE
+!install.sh
+!install.fish
+!preview.png
+!README-es.md
+!README-pt.md
+
+# Ignore everything else
+*
