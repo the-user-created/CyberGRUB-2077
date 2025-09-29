@@ -24,8 +24,10 @@ end
 # Set theme dir based on distro
 if test "$DISTRO" = "fedora" -o "$DISTRO" = "rhel" -o "$DISTRO" = "centos" -o "$DISTRO" = "rocky" -o "$DISTRO" = "almalinux"
 	set THEME_DIR "/boot/grub2/themes"
+	set GRUB_CFG_PATH "/boot/grub2/grub.cfg"
 else
 	set THEME_DIR "/boot/grub/themes"
+	set GRUB_CFG_PATH "/boot/grub/grub.cfg"
 end
 
 # Set lang outs
@@ -153,7 +155,7 @@ printf "$LNG_EDIT_OK"
 # Update GRUB
 printf "$LNG_UP_CHECK"
 if type -q grub-mkconfig
-	sudo grub-mkconfig -o /boot/grub/grub.cfg  > /dev/null 2>&1
+	sudo grub-mkconfig -o "$GRUB_CFG_PATH" > /dev/null 2>&1
 	if test $status -ne 0
 		printf "$LNG_UP_FAIL"
 		exit 1
