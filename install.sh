@@ -1,11 +1,14 @@
 #!/bin/bash
 
+# Get the script's directory to allow running it from anywhere
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+
 THEME_NAME="CyberGRUB-2077"
 GRUB_CFG="/etc/default/grub"
-SYS_LANG="./lang/${LANG:0:2}.sh"
+SYS_LANG="$SCRIPT_DIR/lang/${LANG:0:2}.sh"
 LOGO="samurai"
 
-source ./scripts/outs.sh
+source "$SCRIPT_DIR/scripts/outs.sh"
 
 printf "$OUT_TITLE"
 
@@ -35,17 +38,17 @@ fi
 
 # Set lang outs
 if [ ! -f "$SYS_LANG" ]; then
-	source ./lang/en.sh
+	source "$SCRIPT_DIR/lang/en.sh"
 else
 	# shellcheck source=./lang/${LANG:0:2}.sh
 	source "$SYS_LANG"
 fi
 
 # Check options
-OPTS=$(getopt --options "hlL:" --longoptions "help,list,logo:" --name "$0" -- "$@")
-
-if ! getopt --options "hlL:" --longoptions "help,list,logo:" --name "$0" -- "$@"; then
-	printf "\033[1A\033[K"
+# Suppress getopt's own error messages to show our own
+if ! OPTS=$(getopt --options "hlL:" --longoptions "help,list,logo:" --name "$0" -- "$@" 2>/dev/null); then
+	printf "\033[1A\033[K" # Clear the line where the user typed the command
+	printf "$LNG_ERR_OPT"
 	exit 1
 fi
 
@@ -59,36 +62,42 @@ while true; do
 		;;
 	-l | --list)
 		# List available logos from the img/logos directory
-		LOGOS="$(find ./img/logos -maxdepth 1 -type f -name '*.png' -printf '%f\n' | sed 's/\.png$//')"
-		mapfile -t LOGOS < <(echo "$LOGOS" | tr ' ' '\n')
+		LOGOS=()
+		while IFS= read -r -d '' logo_path; do
+			logo_name=$(basename "$logo_path" .png)
+			LOGOS+=("$logo_name")
+		done < <(find "$SCRIPT_DIR/img/logos" -maxdepth 1 -type f -name '*.png' -print0)
 
 		printf "$LNG_LOGO_TITLE"
 
-		for ((i = 1; i <= ${#LOGOS[@]}; i++)); do
-			if (((i - 1) % 5 == 0)); then
+		COLUMN_WIDTH=16
+		NUM_COLUMNS=5
+
+		for ((i = 0; i < ${#LOGOS[@]}; i++)); do
+			# Start of a new row
+			if ((i % NUM_COLUMNS == 0)); then
 				printf "\e[1;31m║\e[1;36m"
 			fi
-			printf "  %s" "${LOGOS[i]}"
-			for ((j = ${#LOGOS[i]}; j < 13; j++)); do
-				printf " "
-			done
-			if (((i) % 5 == 0)); then
-				printf " \e[1;31m║\e[0m\n"
-			else
-				printf " "
+
+			# Print logo name with padding
+			printf "  %-*s" "$((COLUMN_WIDTH - 2))" "${LOGOS[i]}"
+
+			# End of a row or end of the list
+			if (((i + 1) % NUM_COLUMNS == 0)) || ((i + 1 == ${#LOGOS[@]})); then
+				# If it's an incomplete row, add padding to align the right border
+				if (((i + 1) % NUM_COLUMNS != 0)); then
+					remaining_cols=$((NUM_COLUMNS - (i + 1) % NUM_COLUMNS))
+					printf "%*s" $((remaining_cols * COLUMN_WIDTH)) ""
+				fi
+				printf "\e[1;31m║\e[0m\n"
 			fi
 		done
-		if [ $((${#LOGOS[@]} % 5)) -ne 0 ]; then
-			LLL=$((${#LOGOS[@]} % 5 * 16))
-			printf "%s\e[1;31m║\n%s\e[0m\n" "$(SPACE "$OUT_LEN"-$LLL)" "$(MARGIN ╚ ┘)"
-		else
-			printf "\e[1;31m%s\e[0m\n" "$(MARGIN ╚ ┘)"
-		fi
+		printf "\e[1;31m%s\e[0m\n" "$(MARGIN ╚ ┘)"
 		exit 0
 		;;
 	-L | --logo)
 		# Check if the logo exists
-		if [[ ! -f "./img/logos/${2}.png" ]]; then
+		if [[ ! -f "$SCRIPT_DIR/img/logos/${2}.png" ]]; then
 			printf "$LNG_ERR_LOGO"
 			exit 1
 		else
@@ -127,7 +136,7 @@ fi
 
 # Copy theme
 printf "$LNG_CP_CHECK"
-if cp -r $THEME_NAME $THEME_DIR >/dev/null 2>&1; then
+if cp -r "$SCRIPT_DIR/$THEME_NAME" "$THEME_DIR" >/dev/null 2>&1; then
 	printf "$LNG_CP_OK"
 else
 	printf "$LNG_CP_FAIL"
@@ -136,7 +145,7 @@ fi
 
 # Copy logo.png to theme directory
 printf "$LNG_LOGO_CHECK"
-if cp -f "./img/logos/${LOGO}.png" "${THEME_DIR}/${THEME_NAME}/logo.png" >/dev/null 2>&1; then
+if cp -f "$SCRIPT_DIR/img/logos/${LOGO}.png" "${THEME_DIR}/${THEME_NAME}/logo.png" >/dev/null 2>&1; then
 	printf "$LNG_LOGO_OK"
 else
 	printf "$LNG_LOGO_FAIL"

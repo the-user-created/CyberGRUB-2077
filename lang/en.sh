@@ -3,6 +3,10 @@
 LNG_HELP="\033[1A\033[K║ INSTALLATION SCRIPT$(SPACE "$OUT_LEN"-20)║\n║$(SPACE "$OUT_LEN")║\n║\e[1;31m Usage:$(SPACE "$OUT_LEN"-7)║\n║\e[1;36m   sudo \$SHELL $0 <operation> [...]\e[0m$(SPACE "$OUT_LEN"-45)\e[1;31m║\n║$(SPACE "$OUT_LEN")║\n║\e[1;31m Operations:$(SPACE "$OUT_LEN"-12)║\n║\e[1;36m   -h, --help: Show this help message$(SPACE "$OUT_LEN"-37)\e[1;31m║\n║\e[1;36m   -l, --list: List available logos$(SPACE "$OUT_LEN"-35)\e[1;31m║\n║\e[1;36m   -L, --logo <logo>: Specify a logo to use$(SPACE "$OUT_LEN"-43)\e[1;31m║\n║\e[1;36m   By default, the 'samurai' logo will be used if none is specified$(SPACE "$OUT_LEN"-67)\e[1;31m║\n$(MARGIN ╚ ┘)\n"
 export LNG_HELP
 
+# generic error
+LNG_ERR_OPT="\033[1A\033[K\e[1;31m║\e[1;36m Invalid option. Use -h or --help for usage information.\e[0m$(SPACE "$OUT_LEN"-56)\e[1;31m║\n$(MARGIN ╚ ┘)\n"
+export LNG_ERR_OPT
+
 # list logos
 LNG_LOGO_TITLE="\033[1A\033[K║ AVAILABLE LOGOS$(SPACE "$OUT_LEN"-16)║\n"
 export LNG_LOGO_TITLE
