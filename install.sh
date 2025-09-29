@@ -36,6 +36,16 @@ else
 	GRUB_CFG_PATH="/boot/grub/grub.cfg"
 fi
 
+# Determine the correct GRUB update command
+UPDATE_GRUB_CMD=""
+if command -v update-grub &>/dev/null; then
+	UPDATE_GRUB_CMD="update-grub"
+elif command -v grub2-mkconfig &>/dev/null; then
+	UPDATE_GRUB_CMD="grub2-mkconfig -o $GRUB_CFG_PATH"
+elif command -v grub-mkconfig &>/dev/null; then
+	UPDATE_GRUB_CMD="grub-mkconfig -o $GRUB_CFG_PATH"
+fi
+
 # Set lang outs
 if [ ! -f "$SYS_LANG" ]; then
 	source "$SCRIPT_DIR/lang/en.sh"
@@ -166,8 +176,9 @@ printf "$LNG_EDIT_OK"
 
 # Updating GRUB
 printf "$LNG_UP_CHECK"
-if command -v grub-mkconfig >/dev/null 2>&1; then
-	if ! grub-mkconfig -o "$GRUB_CFG_PATH" >/dev/null 2>&1; then
+if [ -n "$UPDATE_GRUB_CMD" ]; then
+	# The command needs to be evaluated as it may contain arguments
+	if ! eval "$UPDATE_GRUB_CMD" >/dev/null 2>&1; then
 		printf "$LNG_UP_FAIL"
 		exit 1
 	fi
