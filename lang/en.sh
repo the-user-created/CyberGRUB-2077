@@ -68,5 +68,5 @@ export LNG_UP_OK
 LNG_NO_GRUB="\033[2A\033[K║ FAILED TO UPDATE THEME, PLEASE ENSURE GRUB IS INSTALLED CORRECTLY$(SPACE "$OUT_LEN"-66)║\n$(MARGIN ╚ ┘)\n"
 export LNG_NO_GRUB
 # finish
-LNG_FINISH="\033[1A\033[K║ THE THEME HAS BEEN INSTALLED SUCCESSFULLY$(SPACE "$OUT_LEN"-41)║\n║     \e[1;36mYou will now see it at the next reboot.\e[1;31m$(SPACE "$OUT_LEN"-44)║\n$(MARGIN ╚ ┘)\e[0m\n"
+LNG_FINISH="\033[1A\033[K║ THE THEME HAS BEEN INSTALLED SUCCESSFULLY$(SPACE "$OUT_LEN"-42)║\n║     \e[1;36mYou will now see it at the next reboot.\e[1;31m$(SPACE "$OUT_LEN"-44)║\n$(MARGIN ╚ ┘)\e[0m\n"
 export LNG_FINISH

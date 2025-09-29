@@ -6,7 +6,7 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 THEME_NAME="CyberGRUB-2077"
 GRUB_CFG="/etc/default/grub"
 SYS_LANG="$SCRIPT_DIR/lang/${LANG:0:2}.sh"
-LOGO="samurai"
+THEME_LOGO="samurai"
 
 source "$SCRIPT_DIR/scripts/outs.sh"
 
@@ -101,8 +101,8 @@ while true; do
 			printf "$LNG_ERR_LOGO"
 			exit 1
 		else
-			LOGO="$2"
-			printf "\033[1A\033[K║ [\e[1;36m%s\e[1;31m] %s║\n\e[1;31m%s\n" "$LOGO" "$(SPACE "$OUT_LEN"-$((${#LOGO} + 4)))" "$(MARGIN ╚ ┘)"
+			THEME_LOGO="$2"
+			printf "\033[1A\033[K║ [\e[1;36m%s\e[1;31m] %s║\n\e[1;31m%s\n" "$THEME_LOGO" "$(SPACE "$OUT_LEN"-$((${#THEME_LOGO} + 4)))" "$(MARGIN ╚ ┘)"
 		fi
 		shift 2
 		;;
@@ -145,7 +145,7 @@ fi
 
 # Copy logo.png to theme directory
 printf "$LNG_LOGO_CHECK"
-if cp -f "$SCRIPT_DIR/img/logos/${LOGO}.png" "${THEME_DIR}/${THEME_NAME}/logo.png" >/dev/null 2>&1; then
+if cp -f "$SCRIPT_DIR/img/logos/${THEME_LOGO}.png" "${THEME_DIR}/${THEME_NAME}/logo.png" >/dev/null 2>&1; then
 	printf "$LNG_LOGO_OK"
 else
 	printf "$LNG_LOGO_FAIL"
@@ -167,7 +167,7 @@ printf "$LNG_EDIT_OK"
 # Updating GRUB
 printf "$LNG_UP_CHECK"
 if command -v grub-mkconfig >/dev/null 2>&1; then
-	if ! sudo grub-mkconfig -o "$GRUB_CFG_PATH" >/dev/null 2>&1; then
+	if ! grub-mkconfig -o "$GRUB_CFG_PATH" >/dev/null 2>&1; then
 		printf "$LNG_UP_FAIL"
 		exit 1
 	fi
